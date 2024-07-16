@@ -122,6 +122,7 @@ More docs
    templatetags
    reference
    callbacks
+   testing
    faq
    changelog
 
