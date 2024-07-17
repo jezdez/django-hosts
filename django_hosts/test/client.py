@@ -7,13 +7,14 @@ class HostClientMixin:
     """Test client to help work with django-hosts in tests."""
 
     def generic(self, method, path, *args, **extra):
-        if path.startswith('http'):
+        scheme, netloc, *_others = urlparse(path)
+        if scheme:
+            extra["wsgi.url_scheme"] = scheme
+        if netloc:
             # Populate the host header from the URL host
-            _scheme, host, *_others = urlparse(path)
-            if extra.get('headers') is None:
-                extra['headers'] = {}
-            if extra['headers'].get('host') is None:
-                extra['headers']['host'] = host
+            extra["headers"] = extra["headers"] or {}
+            if extra["headers"].get("host") is None:
+                extra["headers"]["host"] = netloc
         return super().generic(method, path, *args, **extra)
 
 

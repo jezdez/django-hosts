@@ -6,8 +6,12 @@ from django_hosts.test import AsyncHostsClient, HostsClient
 class TestHostsClient(TestCase):
     client_class = HostsClient
 
-    def test_host_header_set_from_url(self):
+    def test_host_header_set_from_full_url(self):
         response = self.client.get('https://testserver.local/api/v1/users/')
+        assert response.request['HTTP_HOST'] == 'testserver.local'
+
+    def test_host_header_set_from_url_without_scheme(self):
+        response = self.client.get('//testserver.local/api/v1/users/')
         assert response.request['HTTP_HOST'] == 'testserver.local'
 
     def test_host_header_from_user_is_not_overridden(self):
