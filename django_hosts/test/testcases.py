@@ -1,4 +1,8 @@
-from django.test import SimpleTestCase, TestCase, TransactionTestCase
+from django.test import (
+    SimpleTestCase as DjangoSimpleTestCase,
+    TestCase as DjangoTestCase,
+    TransactionTestCase as DjangoTransactionTestCase
+)
 
 from .client import HostsClient, AsyncHostsClient
 
@@ -8,13 +12,13 @@ class HostsTestCaseMixin:
     async_client_class = AsyncHostsClient
 
 
-class SimpleHostsTestCase(HostsTestCaseMixin, SimpleTestCase):
+class SimpleTestCase(HostsTestCaseMixin, DjangoSimpleTestCase):
     pass
 
 
-class TransactionHostsTestCase(HostsTestCaseMixin, TransactionTestCase):
+class TransactionTestCase(HostsTestCaseMixin, DjangoTransactionTestCase):
     pass
 
 
-class HostsTestCase(HostsTestCaseMixin, TestCase):
+class TestCase(HostsTestCaseMixin, DjangoTestCase):
     pass

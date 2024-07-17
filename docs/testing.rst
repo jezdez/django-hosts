@@ -35,20 +35,20 @@ The solution
 ------------
 
 Luckily django-hosts provides some testing tool to help you write tests with
-less boilerplate, mainly using custom test cases ``SimpleHostsTestCase``,
-``HostsTestCase``, ``TransactionHostsTestCase``, all coming from
-``django_hosts.test``, and subclasses of their counterpart from Django.
+less boilerplate, mainly using custom test cases ``SimpleTestCase``,
+``TestCase``, ``TransactionTestCase``, all coming from ``django_hosts.test``,
+and subclasses of their counterpart from Django.
 
 For example the above test would be written as:
 
 .. code-block:: python
 
     from django_hosts import reverse
-    from django_hosts.test import HostsTestCase
+    from django_hosts.test import TestCase
 
 
     @override_settings(DEFAULT_HOST="api")
-    class UserViewTestCase(HostsTestCase):
+    class UserViewTestCase(TestCase):
         def test_user_list(self):
             url = reverse("list-user")
             response = self.client.get(url)
@@ -56,10 +56,10 @@ For example the above test would be written as:
 
 Specifically:
 
-- We swap the Django ``TestCase`` for the django hosts equivalent. It's using a
-custom test client to set the host header automatically on the request based on
-the absolute URL. As a result, the ``self.client.get(...)`` call no longer need
-the server name/host header.
+- We swap the Django's ``TestCase`` for the django hosts equivalent by changing
+the import statement. It's using a custom test client to set the host header
+automatically on the request based on the absolute URL. As a result, the
+``self.client.get(...)`` call no longer need the server name/host header.
 
 - We set the default host at the class level, using ``override_settings``
 (`from Django <https://docs.djangoproject.com/en/stable/topics/testing/tools/#django.test.override_settings>`_)

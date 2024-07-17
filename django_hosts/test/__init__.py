@@ -1,10 +1,10 @@
 from .client import AsyncHostsClient, HostsClient
-from .testcases import HostsTestCase, SimpleHostsTestCase, TransactionHostsTestCase
+from .testcases import SimpleTestCase, TestCase, TransactionTestCase
 
 __all__ = [
     'AsyncHostsClient',
     'HostsClient',
-    'HostsTestCase',
-    'SimpleHostsTestCase',
-    'TransactionHostsTestCase',
+    'SimpleTestCase',
+    'TestCase',
+    'TransactionTestCase',
 ]
