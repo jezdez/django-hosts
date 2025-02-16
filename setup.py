@@ -24,7 +24,7 @@ setup(
     author='Jannis Leidel',
     author_email='jannis@leidel.info',
     license='BSD',
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
