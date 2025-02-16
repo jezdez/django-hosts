@@ -4,6 +4,10 @@ Changelog
 X.Y (unreleased)
 ----------------
 
+
+7.0 (2025-02-16)
+----------------
+
 - **BACKWARD-INCOMPATIBLE** Dropped support for Python 3.8.
 
 - **BACKWARD-INCOMPATIBLE** Dropped support for Django < 4.2 and Django 5.0
