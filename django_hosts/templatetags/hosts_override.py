@@ -3,6 +3,7 @@ A template tag library that can replace Django's built-in url template tag
 by adding ``'django_hosts.templatetags.hosts_override'`` to the
 ``TEMPLATES['OPTIONS']['builtins']`` list.
 """
+
 from django import template
 
 from .hosts import host_url

@@ -25,12 +25,12 @@ Simply define a callback function:
 .. code-block:: python
 
     from django.conf import settings
-    from django_hosts import patterns, host
+    from django_hosts import host, patterns
 
-    host_patterns = patterns('',
-        host(r'www', settings.ROOT_URLCONF, name='www'),
-        host(r'(?P<username>\w+)', 'path.to.custom_urls',
-             callback='path.to.custom_fn', name='with-callback'),
+    host_patterns = patterns("",
+        host(r"www", settings.ROOT_URLCONF, name="www"),
+        host(r"(?P<username>\w+)", "path.to.custom_urls",
+             callback="path.to.custom_fn", name="with-callback"),
     )
 
 This example avoids the duplicated work in every view by attaching a

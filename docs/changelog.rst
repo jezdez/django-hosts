@@ -280,13 +280,13 @@ X.Y (unreleased)
 
   .. code-block:: python
 
-    from hosts import patterns, hosts
+    from hosts import hosts, patterns,
 
   to:
 
   .. code-block:: python
 
-    from django_hosts import patterns, hosts
+    from django_hosts import hosts, patterns
 
 - **BACKWARDS INCOMPATIBLE** Changed the data type that the
   ``django_hosts.patterns`` function returns to be a list instead of a
@@ -295,11 +295,11 @@ X.Y (unreleased)
 
   .. code-block:: python
 
-    from django_hosts import patterns, host
+    from django_hosts import host, patterns
     from mytemplateproject.hosts import host_patterns
 
-    host_patterns += patterns('',
-        host('www2', 'mysite.urls.www2', name='www2')
+    host_patterns += patterns("",
+        host("www2", "mysite.urls.www2", name="www2")
     )
 
 - Extended tests to have full coverage.

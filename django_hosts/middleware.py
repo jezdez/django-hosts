@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.urls import NoReverseMatch, get_urlconf, set_urlconf
 from django.utils.deprecation import MiddlewareMixin
-from django.urls import NoReverseMatch, set_urlconf, get_urlconf
 
-from .resolvers import get_host_patterns, get_host
+from .resolvers import get_host, get_host_patterns
 
 
 class HostsBaseMiddleware(MiddlewareMixin):
@@ -11,8 +11,9 @@ class HostsBaseMiddleware(MiddlewareMixin):
     Adjust incoming request's urlconf based on hosts defined in
     settings.ROOT_HOSTCONF module.
     """
-    new_hosts_middleware = 'django_hosts.middleware.HostsRequestMiddleware'
-    toolbar_middleware = 'debug_toolbar.middleware.DebugToolbarMiddleware'
+
+    new_hosts_middleware = "django_hosts.middleware.HostsRequestMiddleware"
+    toolbar_middleware = "debug_toolbar.middleware.DebugToolbarMiddleware"
 
     def __init__(self, get_response):
         super().__init__(get_response)
@@ -21,15 +22,13 @@ class HostsBaseMiddleware(MiddlewareMixin):
         try:
             self.default_host = get_host()
         except NoReverseMatch as exc:
-            raise ImproperlyConfigured("Invalid DEFAULT_HOST setting: %s" %
-                                       exc)
+            raise ImproperlyConfigured(f"Invalid DEFAULT_HOST setting: {exc}") from exc
 
         middlewares = list(settings.MIDDLEWARE)
         show_exception = False
 
         if self.new_hosts_middleware in middlewares and self.toolbar_middleware in middlewares:
-            show_exception = (middlewares.index(self.new_hosts_middleware) >
-                              middlewares.index(self.toolbar_middleware))
+            show_exception = middlewares.index(self.new_hosts_middleware) > middlewares.index(self.toolbar_middleware)
 
         if show_exception:
             raise ImproperlyConfigured(

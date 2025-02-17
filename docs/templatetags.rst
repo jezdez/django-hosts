@@ -12,10 +12,10 @@ host pattern of:
 .. code-block:: python
 
     from django.conf import settings
-    from django_hosts import patterns, host
+    from django_hosts import host, patterns
 
-    host_patterns = patterns('',
-        host(r'admin', settings.ROOT_URLCONF, name='our-admin'),
+    host_patterns = patterns("",
+        host(r"admin", settings.ROOT_URLCONF, name="our-admin"),
     )
 
 and a ``ROOT_URLCONF`` of:
@@ -25,7 +25,7 @@ and a ``ROOT_URLCONF`` of:
     from django.urls import path
 
     urlpatterns = [
-        path('dashboard/', 'dashboard', name='dashboard'),
+        path("dashboard/", "dashboard", name="dashboard"),
     ]
 
 then this example will create a link to the admin dashboard:
@@ -74,8 +74,8 @@ Override the default url template tag
 In case you don't like adding ``{% load hosts %}`` to each and every template
 that you reverse an URL in you can automatically override the url template tag
 that is built into Django by adding
-``'django_hosts.templatetags.hosts_override'`` to the
-``TEMPLATES['OPTIONS']['builtins']`` list.
+``"django_hosts.templatetags.hosts_override"`` to the
+``TEMPLATES["OPTIONS"]["builtins"]`` list.
 
 It won't hurt to have some ``{% load hosts %}`` in some templates and the
 :func:`~django_hosts.templatetags.hosts.host_url` template tag will also still
@@ -93,7 +93,7 @@ the rendered URL you can simply set the
 
 .. code-block:: python
 
-    PARENT_HOST = 'example.com'
+    PARENT_HOST = "example.com"
 
 This would render the link of the previous section as:
 
@@ -107,10 +107,10 @@ to all URLs you can also spell out the domain in the host pattern:
 .. code-block:: python
 
     from django.conf import settings
-    from django_hosts import patterns, host
+    from django_hosts import host, patterns
 
-    host_patterns = patterns('',
-        host(r'admin\.example\.com', settings.ROOT_URLCONF, name='admin'),
+    host_patterns = patterns(",
+        host(r"admin\.example\.com", settings.ROOT_URLCONF, name="admin"),
     )
 
 Host and URL pattern parameters
@@ -121,12 +121,12 @@ If your host pattern contains an parameter (or keyed parameter), like:
 .. code-block:: python
 
     from django.conf import settings
-    from django_hosts import patterns, host
+    from django_hosts import host, patterns
 
-    host_patterns = patterns('',
-        host(r'www', settings.ROOT_URLCONF, name='homepage'),
-        host(r'(\w+)', 'path.to.support_urls', name='wildcard'),
-        host(r'(?P<username>\w+).users', 'path.to.user_urls', name='user-area'),
+    host_patterns = patterns("",
+        host(r"www", settings.ROOT_URLCONF, name="homepage"),
+        host(r"(\w+)", "path.to.support_urls", name="wildcard"),
+        host(r"(?P<username>\w+).users", "path.to.user_urls", name="user-area"),
     )
 
 you can also easily pass parameters to the
@@ -140,7 +140,7 @@ you can also easily pass parameters to the
     <a href="{% host_url 'faq-index' host 'wildcard' 'help' %}">FAQ</a>
 
 Which will be rendered (with a :attr:`~django.conf.settings.PARENT_HOST` of
-``'example.com'``) as:
+``"example.com"``) as:
 
 .. code-block:: html+django
 

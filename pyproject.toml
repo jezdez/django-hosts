@@ -1,0 +1,60 @@
+[tool.ruff]
+line-length = 119
+indent-width = 4
+target-version = "py39"
+
+[tool.ruff.lint]
+# See Rules in Ruff documentation: https://docs.astral.sh/ruff/rules/
+select = [
+    "B",   # bugbear
+    "DJ",  # flake8-django
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "INP", # flake8-tidy-imports
+    "UP",  # pyupgrade
+    "W",   # pycodestyle warnings
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+default-section = "first-party"
+known-third-party = [
+    "asgiref",
+    "django",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"django_hosts/__init__.py" = ["F401"]
+
+[tool.tox]
+legacy_tox_ini = """
+    [tox]
+    downloadcache = {distshare}
+    args_are_paths = false
+    envlist =
+        py{39,310,311,312}-dj42
+        py{310,311,312,313}-dj{51,52}
+        py{312,313}-djmain
+
+    [testenv]
+    usedevelop = true
+    commands = make test
+    allowlist_externals = make
+    deps =
+        dj42: Django>=4.2,<5.0
+        dj51: Django>=5.1,<5.2
+        dj52: Django>=5.2a1,<5.3
+        djmain: https://github.com/django/django/tarball/main
+        coverage
+        pytest-django
+        pytest-cov
+
+    [gh-actions]
+    python =
+        3.9: py39
+        3.10: py310
+        3.11: py311
+        3.12: py312
+        3.13: py313
+"""

@@ -24,7 +24,7 @@ Also, you have to install `django-debug-toolbar 0.9.X`_ or higher.
 
 
 My tests using client.post(...) are failing now, what should I do?
---------------------------------------------------------------
+------------------------------------------------------------------
 
 Yes, django-hosts might make your existing pytest tests fail if you are using
 client.post(...). All you need to do is to set the correct SERVER_NAME on that call

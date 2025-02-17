@@ -2,9 +2,7 @@ VENV = /tmp/django-hosts-env
 export PATH := $(VENV)/bin:$(PATH)
 
 test:
-	flake8 django_hosts
 	pytest
-
 
 clean:
 	make -C docs clean

@@ -1,16 +1,19 @@
 """
 When defining hostconfs you need to use the ``patterns`` and ``host`` helpers
 """
+
 import re
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, ViewDoesNotExist
 from django.urls import (
-    get_callable as actual_get_callable, get_mod_func,
+    get_callable as actual_get_callable,
+    get_mod_func,
 )
 from django.utils.encoding import smart_str
 from django.utils.functional import cached_property
 
-from .utils import normalize_scheme, normalize_port
+from .utils import normalize_port, normalize_scheme
 
 
 def get_callable(lookup_view):
@@ -23,7 +26,7 @@ def get_callable(lookup_view):
     try:
         return actual_get_callable(lookup_view)
     except ViewDoesNotExist as exc:
-        raise ImproperlyConfigured(exc.args[0].replace('View', 'Callable'))
+        raise ImproperlyConfigured(exc.args[0].replace("View", "Callable")) from exc
 
 
 def patterns(prefix, *args):
@@ -32,9 +35,9 @@ def patterns(prefix, *args):
 
         from django_hosts import patterns
 
-        host_patterns = patterns('path.to',
-            (r'www', 'urls.default', 'default'),
-            (r'api', 'urls.api', 'api'),
+        host_patterns = patterns("path.to",
+            (r"www", "urls.default", "default"),
+            (r"api", "urls.api", "api"),
         )
 
     :param prefix: the URLconf prefix to pass to the host object
@@ -45,12 +48,12 @@ def patterns(prefix, *args):
     hosts = []
     for arg in args:
         if isinstance(arg, (list, tuple)):
-            arg = host(prefix=prefix, *arg)
+            arg = host(prefix=prefix, *arg)  # noqa: B026
         else:
             arg.add_prefix(prefix)
         name = arg.name
         if name in [h.name for h in hosts]:
-            raise ImproperlyConfigured("Duplicate host name: %s" % name)
+            raise ImproperlyConfigured(f"Duplicate host name: {name}")
         hosts.append(arg)
     return hosts
 
@@ -60,12 +63,12 @@ class host:
     The host object used in host conf together with the
     :func:`django_hosts.defaults.patterns` function, e.g.::
 
-        from django_hosts import patterns, host
+        from django_hosts import host, patterns
 
-        host_patterns = patterns('path.to',
-            host(r'www', 'urls.default', name='default'),
-            host(r'api', 'urls.api', name='api'),
-            host(r'admin', 'urls.admin', name='admin', scheme='https://'),
+        host_patterns = patterns("path.to",
+            host(r"www", "urls.default", name="default"),
+            host(r"api", "urls.api", name="api"),
+            host(r"admin", "urls.admin", name="admin", scheme="https://"),
         )
 
     :param regex: a regular expression to be used to match the request's
@@ -86,17 +89,17 @@ class host:
                  :attr:`~django.conf.settings.HOST_PORT`.
     :type scheme: str
     """
-    def __init__(self, regex, urlconf, name, callback=None, prefix='',
-                 scheme=None, port=None):
+
+    def __init__(self, regex, urlconf, name, callback=None, prefix="", scheme=None, port=None):
         """
         Compile hosts. We add a literal fullstop to the end of every
         pattern to avoid rather unwieldy escaping in every definition.
         The pattern is also suffixed by the PARENT_HOST setting if it exists.
         """
         self.regex = regex
-        parent_host = getattr(settings, 'PARENT_HOST', '').lstrip('.')
-        suffix = r'\.' + parent_host if parent_host else ''
-        self.compiled_regex = re.compile(fr'{regex}{suffix}(\.|:|$)')
+        parent_host = getattr(settings, "PARENT_HOST", "").lstrip(".")
+        suffix = r"\." + parent_host if parent_host else ""
+        self.compiled_regex = re.compile(rf"{regex}{suffix}(\.|:|$)")
         self.urlconf = urlconf
         self.name = name
         self._scheme = scheme
@@ -108,20 +111,20 @@ class host:
         self.add_prefix(prefix)
 
     def __repr__(self):
-        return smart_str('<%s %s: regex=%r urlconf=%r scheme=%r port=%r>' %
-                         (self.__class__.__name__, self.name, self.regex,
-                          self.urlconf, self.scheme, self.port))
+        return smart_str(
+            f'<{self.__class__.__name__} {self.name}: regex="{self.regex}" urlconf="{self.urlconf}" scheme="{self.scheme}" port="{self.port}">'  # noqa: E501
+        )
 
     @cached_property
     def scheme(self):
         if self._scheme is None:
-            self._scheme = getattr(settings, 'HOST_SCHEME', '//')
+            self._scheme = getattr(settings, "HOST_SCHEME", "//")
         return normalize_scheme(self._scheme)
 
     @cached_property
     def port(self):
         if self._port is None:
-            self._port = getattr(settings, 'HOST_PORT', '')
+            self._port = getattr(settings, "HOST_PORT", "")
         return normalize_port(self._port)
 
     @property
@@ -134,19 +137,17 @@ class host:
             self._callback = get_callable(self._callback_str)
         except ImportError as exc:
             mod_name, _ = get_mod_func(self._callback_str)
-            raise ImproperlyConfigured("Could not import '%s'. "
-                                       "Error was: %s" %
-                                       (mod_name, str(exc)))
+            raise ImproperlyConfigured(f"Could not import '{mod_name}'. Error was: {str(exc)}") from exc
         except AttributeError as exc:
             mod_name, func_name = get_mod_func(self._callback_str)
-            raise ImproperlyConfigured("Tried importing '%s' from module "
-                                       "'%s' but failed. Error was: %s" %
-                                       (func_name, mod_name, str(exc)))
+            raise ImproperlyConfigured(
+                f"Tried importing '{func_name}' from module '{mod_name}' but failed. Error was: {str(exc)}"
+            ) from exc
         return self._callback
 
-    def add_prefix(self, prefix=''):
+    def add_prefix(self, prefix=""):
         """
         Adds the prefix string to a string-based urlconf.
         """
         if prefix:
-            self.urlconf = prefix.rstrip('.') + '.' + self.urlconf
+            self.urlconf = prefix.rstrip(".") + "." + self.urlconf

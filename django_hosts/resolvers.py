@@ -3,6 +3,7 @@ If you want to reverse the hostname or the full URL or a view including the
 scheme, hostname and port you'll need to use the ``reverse`` and
 ``reverse_host`` helper functions (or its lazy cousins).
 """
+
 import re
 from functools import lru_cache
 from importlib import import_module
@@ -16,15 +17,15 @@ from django.utils.functional import lazy
 from django.utils.regex_helper import normalize
 
 from .defaults import host as host_cls
-from .utils import normalize_scheme, normalize_port
+from .utils import normalize_port, normalize_scheme
 
 
 @lru_cache
 def get_hostconf():
     try:
         return settings.ROOT_HOSTCONF
-    except AttributeError:
-        raise ImproperlyConfigured("Missing ROOT_HOSTCONF setting")
+    except AttributeError as exc:
+        raise ImproperlyConfigured("Missing ROOT_HOSTCONF setting") from exc
 
 
 @lru_cache
@@ -39,12 +40,12 @@ def get_host(name=None):
     if name is None:
         try:
             name = settings.DEFAULT_HOST
-        except AttributeError:
-            raise ImproperlyConfigured("Missing DEFAULT_HOST setting")
+        except AttributeError as exc:
+            raise ImproperlyConfigured("Missing DEFAULT_HOST setting") from exc
     for host in get_host_patterns():
         if host.name == name:
             return host
-    raise NoReverseMatch("No host called '%s' exists" % name)
+    raise NoReverseMatch(f"No host called '{name}' exists")
 
 
 @lru_cache
@@ -53,8 +54,8 @@ def get_host_patterns():
     module = get_hostconf_module(hostconf)
     try:
         return module.host_patterns
-    except AttributeError:
-        raise ImproperlyConfigured("Missing host_patterns in '%s'" % hostconf)
+    except AttributeError as exc:
+        raise ImproperlyConfigured(f"Missing host_patterns in '{hostconf}'") from exc
 
 
 def clear_host_caches():
@@ -65,7 +66,7 @@ def clear_host_caches():
 
 
 def setting_changed_receiver(setting, enter, **kwargs):
-    if setting in {'ROOT_HOSTCONF', 'DEFAULT_HOST'}:
+    if setting in {"ROOT_HOSTCONF", "DEFAULT_HOST"}:
         clear_host_caches()
 
 
@@ -78,11 +79,11 @@ def reverse_host(host, args=None, kwargs=None):
     reverses the host, e.g.::
 
         >>> from django.conf import settings
-        >>> settings.ROOT_HOSTCONF = 'mysite.hosts'
-        >>> settings.PARENT_HOST = 'example.com'
+        >>> settings.ROOT_HOSTCONF = "mysite.hosts"
+        >>> settings.PARENT_HOST = "example.com"
         >>> from django_hosts.resolvers import reverse_host
-        >>> reverse_host('with_username', args=('jezdez',))
-        'jezdez.example.com'
+        >>> reverse_host("with_username", args=("jezdez",))
+        "jezdez.example.com"
 
     :param name: the name of the host as specified in the hostconf
     :param args: the host arguments to use to find a matching entry in the
@@ -111,18 +112,18 @@ def reverse_host(host, args=None, kwargs=None):
             candidate = result % kwargs
 
         if re.match(host.regex, candidate):  # pragma: no cover
-            parent_host = getattr(settings, 'PARENT_HOST', '').lstrip('.')
+            parent_host = getattr(settings, "PARENT_HOST", "").lstrip(".")
             if parent_host:
                 # only add the parent host when needed (aka www-less domain)
                 if candidate and candidate != parent_host:
-                    candidate = f'{candidate}.{parent_host}'
+                    candidate = f"{candidate}.{parent_host}"
                 else:
                     candidate = parent_host
             return candidate
 
-    raise NoReverseMatch("Reverse host for '%s' with arguments '%s' "
-                         "and keyword arguments '%s' not found." %
-                         (host.name, args, kwargs))
+    raise NoReverseMatch(
+        f"Reverse host for '{host.name}' with arguments '{args}' and keyword arguments '{kwargs}' not found."
+    )
 
 
 #: The lazy version of the :func:`~django_hosts.resolvers.reverse_host`
@@ -130,23 +131,32 @@ def reverse_host(host, args=None, kwargs=None):
 reverse_host_lazy = lazy(reverse_host, str)
 
 
-def reverse(viewname, args=None, kwargs=None, prefix=None, current_app=None,
-            host=None, host_args=None, host_kwargs=None,
-            scheme=None, port=None):
+def reverse(
+    viewname,
+    args=None,
+    kwargs=None,
+    prefix=None,
+    current_app=None,
+    host=None,
+    host_args=None,
+    host_kwargs=None,
+    scheme=None,
+    port=None,
+):
     """
     Given the host and view name and the appropriate parameters,
     reverses the fully qualified URL, e.g.::
 
         >>> from django.conf import settings
-        >>> settings.ROOT_HOSTCONF = 'mysite.hosts'
-        >>> settings.PARENT_HOST = 'example.com'
+        >>> settings.ROOT_HOSTCONF = "mysite.hosts"
+        >>> settings.PARENT_HOST = "example.com"
         >>> from django_hosts.resolvers import reverse
-        >>> reverse('about')
-        '//www.example.com/about/'
-        >>> reverse('about', host='www')
-        '//www.example.com/about/'
-        >>> reverse('repo', args=('jezdez',), host='www', scheme='git', port=1337)
-        'git://jezdez.example.com:1337/repo/'
+        >>> reverse("about")
+        "//www.example.com/about/"
+        >>> reverse("about", host="www")
+        "//www.example.com/about/"
+        >>> reverse("repo", args=("jezdez",), host="www", scheme="git", port=1337)
+        "git://jezdez.example.com:1337/repo/"
 
     You can set the used port and scheme in the host object or override with
     the parameter named accordingly.
@@ -169,9 +179,7 @@ def reverse(viewname, args=None, kwargs=None, prefix=None, current_app=None,
     :rtype: the fully qualified URL with path
     """
     host = get_host(host)
-    hostname = reverse_host(host,
-                            args=host_args,
-                            kwargs=host_kwargs)
+    hostname = reverse_host(host, args=host_args, kwargs=host_kwargs)
     path = reverse_path(
         viewname,
         urlconf=host.urlconf,
@@ -189,7 +197,7 @@ def reverse(viewname, args=None, kwargs=None, prefix=None, current_app=None,
     else:
         port = normalize_port(port)
 
-    return iri_to_uri(f'{scheme}{hostname}{port}{path}')
+    return iri_to_uri(f"{scheme}{hostname}{port}{path}")
 
 
 #: The lazy version of the :func:`~django_hosts.resolvers.reverse`

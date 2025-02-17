@@ -31,11 +31,11 @@ at ``api.example.com`` and ``beta.example.com``, add the following to a
 
 .. code-block:: python
 
-    from django_hosts import patterns, host
+    from django_hosts import host, patterns
 
-    host_patterns = patterns('path.to',
-        host(r'api', 'api.urls', name='api'),
-        host(r'beta', 'beta.urls', name='beta'),
+    host_patterns = patterns("path.to",
+        host(r"api", "api.urls", name="api"),
+        host(r"beta", "beta.urls", name="beta"),
     )
 
 This causes requests to ``{api,beta}.example.com`` to be routed to their
@@ -51,10 +51,10 @@ and ``bar.example.com`` to the same URLconf.
 
 .. code-block:: python
 
-    from django_hosts import patterns, host
+    from django_hosts import host, patterns
 
-    host_patterns = patterns('',
-        host(r'(foo|bar)', 'path.to.urls', name='foo-or-bar'),
+    host_patterns = patterns("",
+        host(r"(foo|bar)", "path.to.urls", name="foo-or-bar"),
     )
 
 .. note:
@@ -83,12 +83,12 @@ You can find the full docs here: `django-hosts.rtfd.org`_
 
 Then configure your Django site to use the app:
 
-#. Add ``'django_hosts'`` to your ``INSTALLED_APPS`` setting.
+#. Add ``"django_hosts"`` to your ``INSTALLED_APPS`` setting.
 
-#. Add ``'django_hosts.middleware.HostsRequestMiddleware'`` to the
+#. Add ``"django_hosts.middleware.HostsRequestMiddleware"`` to the
    **beginning** of your ``MIDDLEWARE`` setting.
 
-#. Add ``'django_hosts.middleware.HostsResponseMiddleware'`` to the **end** of
+#. Add ``"django_hosts.middleware.HostsResponseMiddleware"`` to the **end** of
    your ``MIDDLEWARE`` setting.
 
 #. Create a new module containing your default host patterns,
@@ -99,7 +99,7 @@ Then configure your Django site to use the app:
 
    .. code-block:: python
 
-       ROOT_HOSTCONF = 'mysite.hosts'
+       ROOT_HOSTCONF = "mysite.hosts"
 
 #. Set the ``DEFAULT_HOST`` setting to the **name** of the host pattern you
    want to refer to as the default pattern. It'll be used if no other

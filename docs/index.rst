@@ -9,11 +9,11 @@ Patterns being regular expressions allows setups to feature dynamic (or
 .. code-block:: python
 
     from django.conf import settings
-    from django_hosts import patterns, host
+    from django_hosts import host, patterns
 
-    host_patterns = patterns('',
-        host(r'www', settings.ROOT_URLCONF, name='www'),
-        host(r'(\w+)', 'path.to.custom_urls', name='wildcard'),
+    host_patterns = patterns("",
+        host(r"www", settings.ROOT_URLCONF, name="www"),
+        host(r"(\w+)", "path.to.custom_urls", name="wildcard"),
     )
 
 Here, requests to ``www.example.com`` will be routed as normal but a
@@ -28,10 +28,10 @@ of the ``ROOT_URLCONF`` setting:
 
 .. code-block:: python
 
-    from django_hosts import patterns, host
+    from django_hosts import host, patterns
 
-    host_patterns = patterns('',
-        host(r'(?!www)\w+', 'path.to.custom_urls', name='wildcard'),
+    host_patterns = patterns("",
+        host(r"(?!www)\w+", "path.to.custom_urls", name="wildcard"),
     )
 
 In your templates you can use the
@@ -66,8 +66,8 @@ with Django's own reverse function. Simply use the
     from django_hosts.resolvers import reverse
 
     def homepage(request):
-        homepage_url = reverse('homepage', host='www')
-        return render(request, 'homepage.html', {'homepage_url': homepage_url})
+        homepage_url = reverse("homepage", host="www")
+        return render(request, "homepage.html", {"homepage_url": homepage_url})
 
 Settings
 --------
@@ -97,7 +97,7 @@ Settings
 
     The scheme to prepend host names with during reversing, e.g. when
     using the :func:`~django_hosts.templatetags.hosts.host_url` template tag.
-    Defaults to ``'//'``.
+    Defaults to ``"//"``.
 
 .. attribute:: HOST_PORT (optional)
 
@@ -105,7 +105,7 @@ Settings
 
     The port to append to host names during reversing, e.g. when
     using the :func:`~django_hosts.templatetags.hosts.host_url` template tag.
-    Defaults to ``''`` (empty string).
+    Defaults to ``""`` (empty string).
 
 .. attribute:: HOST_SITE_TIMEOUT (optional)
 

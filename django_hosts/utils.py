@@ -1,18 +1,18 @@
-def normalize_scheme(scheme=None, default='//'):
+def normalize_scheme(scheme=None, default="//"):
     if scheme is None:
         scheme = default
-    elif scheme.endswith(':'):
-        scheme = '%s//' % scheme
-    elif '//' not in scheme:
-        scheme = '%s://' % scheme
+    elif scheme.endswith(":"):
+        scheme = f"{scheme}//"
+    elif "//" not in scheme:
+        scheme = f"{scheme}://"
     return scheme
 
 
 def normalize_port(port=None):
     if port is None:
-        port = ''
-    elif ':' in port:
-        port = ':%s' % port.strip(':')
+        port = ""
+    elif ":" in port:
+        port = ":{}".format(port.strip(":"))
     elif port:
-        port = ':%s' % port
+        port = f":{port}"
     return port
