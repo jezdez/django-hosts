@@ -39,8 +39,9 @@ at ``api.example.com`` and ``beta.example.com``, add the following to a
     )
 
 This causes requests to ``{api,beta}.example.com`` to be routed to their
-corresponding URLconf. You can use your ``urls.py`` as a template for these
-hostconfs.
+corresponding host URL conf file. Host URL conf file should define all routes which going to be hendled on a certain subdomain and has a same format like your plain ``urls.py`` (you can use it as a tamplate for your host URL confs). For example, requests to ``api.example.com`` will be mapped to views acording to `/path/to/api/urls.py` file
+
+
 
 Patterns are evaluated in order. If no pattern matches, the request is
 processed in the usual way, ie. using the standard ``ROOT_URLCONF``.
